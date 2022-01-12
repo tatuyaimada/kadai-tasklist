@@ -23,8 +23,7 @@
         </table>
     @endif
     
-    {{--メッセージ作成ページへのリンク --}}
-    {!! link_to_route('message.create','新規
-    メッセージの投稿',[],['class' => 'btn btn-primary']) !!}
+    {!! link_to_route('tasks.create','新規
+    タスクの投稿',[],['class' => 'btn btn-primary']) !!}
 
 @endsection
