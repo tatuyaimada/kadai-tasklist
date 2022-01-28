@@ -55,6 +55,8 @@ class TasksController extends Controller
         
         $request->user()->tasks()->create([
             'content' => $request->content,
+            
+        
         ]);
         
         return back();

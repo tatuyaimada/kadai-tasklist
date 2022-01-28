@@ -21,6 +21,8 @@ class CreateTasksTable extends Migration
             
             // 外部キー制約
             $table->foreign('user_id')->references('id')->on('users');
+        
+            $table->dropForeign('tasks_user_id_foreign');
         });
     }
 
