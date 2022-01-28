@@ -8,12 +8,9 @@
                     <div class="card-header">
                         <h3 class="card-title">{{ Auth::user()->name }}</h3>
                     </div>
+                     @include('tasks.index')
                 </div>
-            <div class="card-body">
-                   
-            </div>
             </aside>
-           
         </div>
     @else
         <div class="center jumbotron">
