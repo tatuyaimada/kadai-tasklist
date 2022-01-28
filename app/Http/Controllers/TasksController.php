@@ -16,6 +16,23 @@ class TasksController extends Controller
         return view('tasks.index',[
             'tasks' =>$tasks,
             ]);
+            
+        $data = [];
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザを取得
+            $user = \Auth::user();
+            // ユーザの投稿の一覧を作成日時の降順で取得
+            // （後のChapterで他ユーザの投稿も取得するように変更しますが、現時点ではこのユーザの投稿のみ取得します）
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+        }
+
+        // Welcomeビューでそれらを表示
+        return view('welcome', $data);
     }
 
     // getでmessages/createにアクセスされた場合の「新規登録画面表示処理」
@@ -39,9 +56,14 @@ class TasksController extends Controller
         $task = new Task;
         $task->status = $request->status;
         $task->content = $request->content;
+        $task->user_id = $request->user_id;
         $task->save();
         
-        return redirect('/');
+        $request->user()->tasks()->create([
+            'content' => $request->content,
+        ]);
+        
+        return back();
     }
 
     // getでmessages/（任意のid）にアクセスされた場合の「取得表示処理」
@@ -49,8 +71,13 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
         
+        $user->loadRelationshipCounts();
+        // ユーザの投稿一覧を作成日時の降順で取得
+        $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+
         return view('tasks.show',[
             'task' =>$task,
+            'tasks' => $tasks,
             ]);
     }
 
@@ -86,7 +113,9 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
         
+        if (\Auth::id() === $task->user_id) {
         $task->delete();
+        }
         
         return redirect('/');
     }
