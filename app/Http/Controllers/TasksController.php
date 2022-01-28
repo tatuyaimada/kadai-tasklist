@@ -11,13 +11,7 @@ class TasksController extends Controller
     // getでmessages/にアクセスされた場合の「一覧表示処理」
     public function index()
     {
-        $tasks = Task::all();
-        
-        return view('tasks.index',[
-            'tasks' =>$tasks,
-            ]);
-            
-        $data = [];
+         $data = [];
         if (\Auth::check()) { // 認証済みの場合
             // 認証済みユーザを取得
             $user = \Auth::user();
@@ -70,15 +64,13 @@ class TasksController extends Controller
     public function show($id)
     {
         $task = Task::findOrFail($id);
+    
+    if (\Auth::id() === $task->user_id) {
+        $task->show();
+        }
         
-        $user->loadRelationshipCounts();
-        // ユーザの投稿一覧を作成日時の降順で取得
-        $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
-
-        return view('tasks.show',[
-            'task' =>$task,
-            'tasks' => $tasks,
-            ]);
+        return redirect('/');
+        
     }
 
     // getでmessages/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
@@ -89,6 +81,12 @@ class TasksController extends Controller
         return view('tasks.edit',[
             'task' =>$task,
             ]);
+            
+    if (\Auth::id() === $task->user_id) {
+        $task->edit();
+        }
+        
+        return redirect('/');
     }
 
     // putまたはpatchでmessages/（任意のid）にアクセスされた場合の「更新処理」
@@ -104,6 +102,10 @@ class TasksController extends Controller
         $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
+        
+        if (\Auth::id() === $task->user_id) {
+        $task->update();
+        }
         
         return redirect('/');
     }
