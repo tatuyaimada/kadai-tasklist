@@ -39,55 +39,38 @@ class TasksController extends Controller
             'content' => 'required|max:255',
             'status' => 'required|max:10',
         ]);
-       
-       //* Auth::user()->user_id;  
-       //*どこにどう入力したらいいか答えがみつからない。
-       
-        $task = new Task;
+          $task = new Task;
         $task->status = $request->status;
         $task->content = $request->content;
         $task->user_id = $request->user_id;
         $task->user_id = \Auth::id();
         $task->save();
-        
-        
-       
-
+      
         return redirect('/');
     }
     // getでmessages/（任意のid）にアクセスされた場合の「取得表示処理」
     public function show($id)
     {
         $task = Task::findOrFail($id);
-        
-        return view('tasks.show',[
-            'task' => $task,
-        ]);
-        
-        
-        $task = Task::findOrFail($id);
-        
-        if (\Auth::id() === $task->user_id) {
-        $task->show();
+       if (\Auth::id() === $task->user_id) {
+            return view('tasks.show',[
+                'task' => $task,
+            ]);
+        }else{
+            return redirect('/');
         }
-        return redirect('/');
-        
     }
     // getでmessages/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
     public function edit($id)
     {
         $task = Task::findOrFail($id);
-        
-        return view('tasks.edit',[
-            'task' =>$task,
-            ]);
-            
-        $task = Task::findOrFail($id);
-        
-        if (\Auth::id() === $task->user_id) {
-        $task->edit();
+         if (\Auth::id() === $task->user_id) {
+            return view('tasks.edit',[
+                'task' =>$task,
+             ]);
+        }else{
+             return redirect('/');
         }
-        return redirect('/');
     }
     // putまたはpatchでmessages/（任意のid）にアクセスされた場合の「更新処理」
     public function update(Request $request, $id)
