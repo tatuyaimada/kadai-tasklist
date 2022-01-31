@@ -59,14 +59,17 @@ class TasksController extends Controller
     public function show($id)
     {
         $task = Task::findOrFail($id);
+        
         return view('tasks.show',[
             'task' => $task,
         ]);
         
+        
+        $task = Task::findOrFail($id);
+        
         if (\Auth::id() === $task->user_id) {
         $task->show();
         }
-        
         return redirect('/');
         
     }
@@ -75,14 +78,17 @@ class TasksController extends Controller
     {
         $task = Task::findOrFail($id);
         
+        
+        
         return view('tasks.edit',[
             'task' =>$task,
             ]);
             
-    if (\Auth::id() === $task->user_id) {
+        $task = Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id) {
         $task->edit();
         }
-        
         return redirect('/');
     }
     // putまたはpatchでmessages/（任意のid）にアクセスされた場合の「更新処理」
@@ -99,10 +105,11 @@ class TasksController extends Controller
         $task->content = $request->content;
         $task->save();
         
+        $task = Task::findOrFail($id);
+        
         if (\Auth::id() === $task->user_id) {
         $task->update();
         }
-        
         return redirect('/');
     }
     // deleteでmessages/（任意のid）にアクセスされた場合の「削除処理」
@@ -113,7 +120,6 @@ class TasksController extends Controller
         if (\Auth::id() === $task->user_id) {
         $task->delete();
         }
-        
         return redirect('/');
     }
 }
