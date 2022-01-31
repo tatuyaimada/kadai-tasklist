@@ -27,9 +27,14 @@ class TasksController extends Controller
     {
         $task = new Task;
         
-        return view('tasks.create',[
-            'task' =>$task,
+        $task = Task::findOrFail($id);
+       if (\Auth::id() === $task->user_id) {
+            return view('tasks.show',[
+                'task' => $task,
             ]);
+        }else{
+            return redirect('/');
+        }
     }
     // postでmessages/にアクセスされた場合の「新規登録処理」
         public function store(Request $request)
