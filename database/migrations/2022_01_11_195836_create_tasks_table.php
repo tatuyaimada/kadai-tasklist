@@ -14,25 +14,21 @@ class CreateTasksTable extends Migration
     public function up()
     {
         Schema::create('tasks', function (Blueprint $table) {
+            
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->string('content');
             $table->timestamps();
             
             // 外部キー制約
-            $table->foreign('user_id')->references('id')->on('users');
-        
-            $table->dropForeign('tasks_user_id_foreign');
+            $table->foreign('user_id')->references('id')->on('tasks');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
+    
     public function down()
     {
         Schema::dropIfExists('tasks');
+        $table->dropForeign(['user_id']);
     }
 }
