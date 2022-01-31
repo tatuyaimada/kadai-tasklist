@@ -37,4 +37,48 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+    
+    
+    public function show($id)
+    {
+        $task = Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id) {
+        $task->show();
+        }
+        return redirect('/');
+        
+    }
+    // getでmessages/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
+    public function edit($id)
+    {
+        $task = Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id) {
+        $task->edit();
+        }
+        return redirect('/');
+    }
+    // putまたはpatchでmessages/（任意のid）にアクセスされた場合の「更新処理」
+    public function update(Request $request, $id)
+    {   
+        $task = Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id) {
+        $task->update();
+        }
+        return redirect('/');
+    }
+    // deleteでmessages/（任意のid）にアクセスされた場合の「削除処理」
+    public function destroy($id)
+    {
+        $task = Task::findOrFail($id);
+        
+        if (\Auth::id() === $task->user_id) {
+        $task->delete();
+        } 
+        return redirect('/');
+    }
 }
+
+
